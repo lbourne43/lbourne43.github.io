@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script>
+function updatePokemon(poke, box) {
+    // send poke to box
+    document.getElementByName("poke" + str(box)).innerHTML = poke.name;
+}
+
+function randomPokemon() {
+    var keys = pokemon.keys();
+    return pokemon[keys[Math.floor(keys.length * Math.random())]];
+}
+
+function randomizePokemon() {
+    // choose 9 random pokemon
+    for (let i = 1; i < 10; i++) {
+        var poke = randomPokemon()
+	updatePokemon(poke, i)
+    }
+}
+function fetchJSONData() {
+    fetch('./poke.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => console.log(data))
+        .catch(error => console.error('Failed to fetch data:', error));
+}
+var pokemon = fetchJSONData();
+console.log(pokemon['charmander']['type'])
+</script>
+</head>
+<body>
+	<div name='poke1'></div>
+	<div name='poke2'></div>
+	<div name='poke3'></div>
+	<div name='poke4'></div>
+	<div name='poke5'></div>
+	<div name='poke6'></div>
+	<div name='poke7'></div>
+	<div name='poke8'></div>
+	<div name='poke9'></div>
+	<button onclick='randomizePokemon()'>
+</body>
+</html>
