@@ -1,49 +1,95 @@
 <!doctype html>
 <html>
 <head>
+<script src=poke.js></script>
 <script>
 function updatePokemon(poke, box) {
     // send poke to box
-    document.getElementByName("poke" + str(box)).innerHTML = poke.name;
+    document.getElementById("poke" + String(box)).innerHTML = poke.name;
 }
 
-function randomPokemon(pokemon) {
-    var keys = pokemon.keys();
-    return pokemon[keys[Math.floor(keys.length * Math.random())]];
+function randomPokemon(pokemon, seed) {
+    var keys = Object.keys(pokemon);
+    var my_random = random(seed);
+    console.log(my_random());
+    return pokemon[keys[Math.floor(keys.length * my_random())]];
 }
 
 function randomizePokemon(pokemon) {
     // choose 9 random pokemon
+    var seed = parseInt(document.getElementById("seed").value);
     for (let i = 1; i < 10; i++) {
-        var poke = randomPokemon(pokemon)
+        var poke = randomPokemon(pokemon, seed + i + 10);
 	updatePokemon(poke, i)
     }
 }
-function fetchJSONData() {
-    fetch('./poke.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => console.log(data))
-        .catch(error => console.error('Failed to fetch data:', error));
+
+function random(seed) {
+  var m = 2 ** 35 - 31;
+  var a = 185852;
+  var s = seed % m;
+  return function () {
+    return (s = (s * a) % m) / m;
+  };
 }
-var pokemon = fetchJSONData();
-console.log(pokemon['charmander']['type'])
+
+
+//console.log(pokemon['charmander']['type'])
+function init(pokemon) {
+    document.getElementById("seed").value = Math.floor(Math.random() * 10000);
+    randomizePokemon(pokemon);
+}
 </script>
+<style>
+button, label, input {
+    font-size: 1.5em;
+}
+* {
+    font-family: Ubuntu, arial, sans;
+}
+.clearfix {
+    float: none;
+    clear: both;
+    display: block;
+}
+.p1, .p2, .share {
+    float: left;
+    display: block;
+    height: 100px;
+    width: 200px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 100px;  
+    margin: 10px;
+    border: 1px solid black;
+}
+.p1 {
+    background-color: #99f;
+}
+.p2 {
+    background-color: #f66;
+}
+</style>
 </head>
-<body>
-	<div name='poke1'></div>
-	<div name='poke2'></div>
-	<div name='poke3'></div>
-	<div name='poke4'></div>
-	<div name='poke5'></div>
-	<div name='poke6'></div>
-	<div name='poke7'></div>
-	<div name='poke8'></div>
-	<div name='poke9'></div>
+<body onload='init(pokemon)'>
+	<h1>Random Pokemon Chooser</h1>
+	<br/>
+	<div class='p1' id='poke1'></div>
+	<div class='p1' id='poke2'></div>
+	<div class='p1' id='poke3'></div>
+	<span class='clearfix'>&nbsp;</span>
+	<div class='share' id='poke4'></div>
+	<div class='share' id='poke5'></div>
+	<div class='share' id='poke6'></div>
+	<span class='clearfix'>&nbsp;</span>
+	<div class='p2'id='poke7'></div>
+	<div class='p2'id='poke8'></div>
+	<div class='p2'id='poke9'></div>
+	<span class='clearfix'>&nbsp;</span>
+	<br/>
 	<button onclick='randomizePokemon(pokemon)'>Randomize</button>
+	<br/>
+	<br/>
+	<label>Seed: </label><input type=number id='seed'/>
 </body>
 </html>
